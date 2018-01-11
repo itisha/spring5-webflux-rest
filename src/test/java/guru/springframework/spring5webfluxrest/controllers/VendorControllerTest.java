@@ -10,6 +10,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 
 public class VendorControllerTest {
@@ -46,9 +47,12 @@ public class VendorControllerTest {
         BDDMockito.given(vendorRepository.findById(anyString()))
                 .willReturn(Mono.just(Vendor.builder().firstName("TestName1").build()));
 
-        webTestClient.get()
-                .uri("/api/v1/categories/1")
+        assertEquals("TestName1", webTestClient.get()
+                .uri("/api/v1/vendors/1")
                 .exchange()
-                .expectBody(Vendor.class);
+                .expectBody(Vendor.class)
+                .returnResult()
+                .getResponseBody()
+                .getFirstName());
     }
 }
